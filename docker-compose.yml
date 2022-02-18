@@ -1,0 +1,19 @@
+version: '3.7'
+services:
+  chipyard:
+    build: ./docker
+    user: ${FIXUID:-1000}:${FIXGID:-1000}
+    read_only: true
+    tty: true
+    hostname: chipyard-${HOST}
+    restart: unless-stopped
+    environment:
+      MAKEFLAGS: '-j8'
+      VERILATOR_THREADS: 8
+    volumes:
+      - .:/chipyard
+      - ./docker-homedir:/home/docker
+    tmpfs:
+      - /tmp
+      - /run
+
