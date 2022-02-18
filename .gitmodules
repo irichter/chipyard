@@ -4,7 +4,7 @@
 	shallow = true
 [submodule "testchipip"]
 	path = generators/testchipip
-	url = https://github.com/ucb-bar/testchipip.git
+	url = https://github.com/irichter/testchipip.git
 	shallow = true
 [submodule "barstools"]
 	path = tools/barstools

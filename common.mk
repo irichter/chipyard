@@ -241,6 +241,25 @@ run-binary-fast-hex: override LOADMEM = $(binary_hex)
 run-binary-fast-hex: override SIM_FLAGS += +loadmem=$(LOADMEM) +loadmem_addr=$(LOADMEM_ADDR)
 
 #########################################################################################
+# helper rules to run simulator with fast loadelf via elf files
+#########################################################################################
+run-binary-elf: check-binary
+run-binary-elf: $(output_dir) $(sim)
+run-binary-elf: run-binary
+run-binary-elf: override LOADMEM_ADDR = 80000000
+run-binary-elf: override SIM_FLAGS += +loadelf=$(BINARY) +loadmem_addr=$(LOADMEM_ADDR)
+run-binary-debug-elf: check-binary
+run-binary-debug-elf: $(output_dir) $(sim)
+run-binary-debug-elf: run-binary-debug
+run-binary-debug-elf: override LOADMEM_ADDR = 80000000
+run-binary-debug-elf: override SIM_FLAGS += +loadelf=$(BINARY) +loadmem_addr=$(LOADMEM_ADDR)
+run-binary-fast-elf: check-binary
+run-binary-fast-elf: $(output_dir) $(sim)
+run-binary-fast-elf: run-binary-fast
+run-binary-fast-elf: override LOADMEM_ADDR = 80000000
+run-binary-fast-elf: override SIM_FLAGS += +loadelf=$(BINARY) +loadmem_addr=$(LOADMEM_ADDR)
+
+#########################################################################################
 # run assembly/benchmarks rules
 #########################################################################################
 $(output_dir):
