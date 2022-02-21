@@ -181,3 +181,6 @@
 [submodule "toolchains/llvm"]
 	path = toolchains/llvm
 	url = git@github.com:irichter/chipyard-toolchains-llvm.git
+[submodule "trigger_tcb"]
+	path = trigger_tcb
+	url = git@github.com:irichter/riscv-trigger_tcb.git

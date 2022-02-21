@@ -253,3 +253,14 @@ class MulticlockAXIOverSerialConfig extends Config(
   new freechips.rocketchip.subsystem.WithNBigCores(2) ++
   new chipyard.config.AbstractConfig)
 // DOC include end: MulticlockAXIOverSerialConfig
+
+class RV64DebugRocketConfig extends Config(
+  new freechips.rocketchip.subsystem.WithNBreakpoints(2) ++         // 2 debug trigger registers
+  new freechips.rocketchip.subsystem.WithNBigCores(1) ++         // single rocket-core
+  new chipyard.config.AbstractConfig)
+
+class RV32DebugRocketConfig extends Config(
+  new freechips.rocketchip.subsystem.WithRV32 ++            // set RocketTiles to be 32-bit
+  new freechips.rocketchip.subsystem.WithNBreakpoints(2) ++         // 2 debug trigger registers
+  new freechips.rocketchip.subsystem.WithNBigCores(1) ++         // single rocket-core
+  new chipyard.config.AbstractConfig)
