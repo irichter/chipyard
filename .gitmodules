@@ -184,3 +184,6 @@
 [submodule "trigger_tcb"]
 	path = trigger_tcb
 	url = git@github.com:irichter/riscv-trigger_tcb.git
+[submodule "fpga/digilent-boards"]
+	path = fpga/digilent-boards
+	url = https://github.com/Digilent/vivado-boards.git
