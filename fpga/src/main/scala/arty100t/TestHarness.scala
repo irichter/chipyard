@@ -26,7 +26,6 @@ class Arty100TFPGATestHarness(override implicit val p: Parameters) extends Arty1
   val pllReset = InModuleBody { Wire(Bool()) }
   
   def dp = designParameters
-  // Any reason to override the overlays as with the VCU118?
   val topDesign = LazyModule(p(BuildTop)(dp)).suggestName("chiptop")
 
 // DOC include start: ClockOverlay
@@ -58,8 +57,6 @@ class Arty100TFPGATestHarness(override implicit val p: Parameters) extends Arty1
 // DOC include end: UartOverlay
 
   /*** SPI ***/
-
-  // 1st SPI goes to the VCU118 SDIO port
 
   val io_spi_bb = BundleBridgeSource(() => (new SPIPortIO(dp(PeripherySPIKey).head)))
   dp(SPIOverlayKey).head.place(SPIDesignInput(dp(PeripherySPIKey).head, io_spi_bb))
@@ -105,8 +102,12 @@ class Arty100TFPGATestHarnessImp(_outer: Arty100TFPGATestHarness) extends LazyRa
   val buildtopClock = _outer.dutClock.in.head._1.clock
   val buildtopReset = WireInit(hReset)
   val dutReset = hReset.asAsyncReset
-  val success = false.B
+  val success = IO(Output(Bool()))
 
+  // This will be overridden by the WithFPGASimSerial harness binder to set
+  // success to the output of the sim serial module.
+  success := false.B
+  
   childClock := buildtopClock
   childReset := buildtopReset
 
