@@ -13,6 +13,12 @@ import chipyard.{HasHarnessSignalReferences, CanHaveMasterTLMemPort}
 import chipyard.harness.{OverrideHarnessBinder}
 
 import testchipip._
+import sifive.blocks.devices.spi.HasPeripherySPIFlashModuleImp
+import freechips.rocketchip.devices.debug.HasPeripheryDebug
+import chipyard.iobinders.JTAGChipIO
+import freechips.rocketchip.devices.debug.ClockedDMIIO
+import freechips.rocketchip.devices.debug.ClockedAPBBundle
+import sifive.blocks.devices.gpio.HasPeripheryGPIO
 
 /*** UART ***/
 class WithUART extends OverrideHarnessBinder({
@@ -29,6 +35,40 @@ class WithSPISDCard extends OverrideHarnessBinder({
     th match { case arty100tth: Arty100TFPGATestHarnessImp => {
       arty100tth.arty100tOuter.io_spi_bb.bundle <> ports.head
     } }
+  }
+})
+
+class WithSPIFlash extends OverrideHarnessBinder({
+  (system: HasPeripherySPIFlashModuleImp, th: BaseModule with HasHarnessSignalReferences, ports: Seq[SPIPortIO]) => {
+    th match { case arty100tth: Arty100TFPGATestHarnessImp => {
+      arty100tth.arty100tOuter.io_spiflash_bb.bundle <> ports.head
+    } }
+  }
+})
+
+class WithJTAGDebug extends OverrideHarnessBinder({
+  (system: HasPeripheryDebug, th: BaseModule with HasHarnessSignalReferences, ports: Seq[Data]) => {
+    th match { case arty100tth: Arty100TFPGATestHarnessImp => {
+    ports.map {
+      case j: JTAGChipIO =>
+        j.TCK := arty100tth.arty100tOuter.debug_jtag.TCK
+        j.TMS := arty100tth.arty100tOuter.debug_jtag.TMS
+        j.TDI := arty100tth.arty100tOuter.debug_jtag.TDI
+        arty100tth.arty100tOuter.debug_jtag.TDO.data := j.TDO
+        arty100tth.arty100tOuter.debug_jtag.TDO.driven := true.B
+      case d: ClockedDMIIO =>
+        d.dmi.req.valid := false.B
+        d.dmi.req.bits  := DontCare
+        d.dmi.resp.ready := true.B
+        d.dmiClock := false.B.asClock
+        d.dmiReset := true.B
+      case a: ClockedAPBBundle =>
+        a.tieoff()
+        a.clock := false.B.asClock
+        a.reset := true.B.asAsyncReset
+        a.psel := false.B
+        a.penable := false.B
+    } } }
   }
 })
 

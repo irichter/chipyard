@@ -4,6 +4,8 @@
 # argv[2] = output directory
 # argv[3] = common fpga brand tcl
 
+set_param board.repoPaths [file join [file dirname [info script]] "../digilent-boards/new/board_files" ]
+
 set synth_checkpoint_file [lindex $argv 0]
 set board [lindex $argv 1]
 set wrkdir [lindex $argv 2]

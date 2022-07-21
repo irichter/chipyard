@@ -100,20 +100,6 @@ ifeq ($(SUB_PROJECT),arty100tsim)
 	FPGA_BRAND        ?= xilinx
 endif
 
-ifeq ($(SUB_PROJECT),arty100t)
-	SBT_PROJECT       ?= fpga_platforms
-	MODEL             ?= Arty100TFPGATestHarness
-	VLOG_MODEL        ?= Art100TyFPGATestHarness
-	MODEL_PACKAGE     ?= chipyard.fpga.arty100t
-	CONFIG            ?= RocketArty100TConfig
-	CONFIG_PACKAGE    ?= chipyard.fpga.arty100t
-	GENERATOR_PACKAGE ?= chipyard
-	TB                ?= none # unused
-	TOP               ?= ChipTop
-	BOARD             ?= arty_a7_100
-	FPGA_BRAND        ?= xilinx
-endif
-
 include $(base_dir)/variables.mk
 
 # default variables to build the arty example
@@ -170,6 +156,28 @@ synth_list_f := $(build_dir)/$(long_name).vsrcs.f
 $(synth_list_f): $(sim_common_files) $(all_vsrcs)
 	$(foreach file,$(all_vsrcs),echo "$(file)" >> $@;)
 	cat $(sim_common_files) >> $@
+
+.PHONY: synth-only
+synth-only: $(synth_list_f)
+	cd $(build_dir); vivado \
+		-nojournal -mode batch \
+		-source $(fpga_common_script_dir)/synth-only.tcl \
+		-tclargs \
+			-top-module "$(MODEL)" \
+			-F "$(synth_list_f)" \
+			-board "$(BOARD)" \
+			-ip-vivado-tcls "$(shell find '$(build_dir)' -name '*.vivado.tcl')"
+
+.PHONY: project-only
+project-only: $(synth_list_f)
+	cd $(build_dir); vivado \
+		-nojournal -mode batch \
+		-source $(fpga_common_script_dir)/project-only.tcl \
+		-tclargs \
+			-top-module "$(MODEL)" \
+			-F "$(synth_list_f)" \
+			-board "$(BOARD)" \
+			-ip-vivado-tcls "$(shell find '$(build_dir)' -name '*.vivado.tcl')"
 
 BIT_FILE := $(build_dir)/obj/$(MODEL).bit
 $(BIT_FILE): $(synth_list_f)

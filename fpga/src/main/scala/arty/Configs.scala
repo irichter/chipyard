@@ -33,6 +33,9 @@ class WithDefaultPeripherals extends Config((site, here, up) => {
       fAddress = 0x20000000,
       rAddress = 0x10014000,
       defaultSampleDel = 3))
+})
+
+class WithSPIFlashBootROM extends Config((site, here, up) => {
   case BootROMLocated(x) => up(BootROMLocated(x), site).map { p =>
     // invoke makefile for xip
     val make = s"make -C fpga/src/main/resources/arty/xip bin"
@@ -40,6 +43,7 @@ class WithDefaultPeripherals extends Config((site, here, up) => {
     p.copy(hang = 0x10000, contentFileName = s"./fpga/src/main/resources/arty/xip/build/xip.bin")
   }
 })
+
 // DOC include start: AbstractArty and Rocket
 class WithArtyTweaks extends Config(
   new WithArtyJTAGHarnessBinder ++
@@ -52,6 +56,7 @@ class WithArtyTweaks extends Config(
   new freechips.rocketchip.subsystem.WithNBreakpoints(2))
 
 class TinyRocketArtyConfig extends Config(
+  new WithSPIFlashBootROM ++
   new WithArtyTweaks ++
   new chipyard.TinyRocketConfig)
 
@@ -62,3 +67,10 @@ class TinyRocketArtySimConfig extends Config(
   new chipyard.harness.WithTiedOffDebug ++
   new TinyRocketArtyConfig)
 // DOC include end: AbstractArty and Rocket
+
+class E300Config extends Config(
+  new WithL1ICacheWays(2)        ++
+  new WithL1ICacheSets(128)      ++
+  new WithDefaultBtb             ++
+  new WithArtyTweaks ++
+  new chipyard.TinyRocketConfig)

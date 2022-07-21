@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y ca-certificates
 	texinfo gengetopt \
 	cmake/bullseye-backports cmake-data/bullseye-backports \
 	pkg-config \
-	python3 patch diffstat subversion git ssh-client \
+	python3 python3-dev patch diffstat subversion git ssh-client \
 	device-tree-compiler \
 	verilator \
 	bc \
@@ -30,7 +30,10 @@ RUN apt-get update && apt-get install --no-install-recommends -y ca-certificates
 	graphviz \
 	bear \
 	gdb lldb-${LLVM_VERSION} \
-	locales && \
+	locales \
+	libtinfo5 \
+	libedit-dev libxml2-dev liblzma-dev swig \
+	libusb-1.0-0-dev && \
 	\
 	echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && locale-gen --purge &&\
 	\
@@ -60,6 +63,8 @@ ENTRYPOINT ["fixuid"]
 ENV SHELL /bin/bash
 ENV MAKEFLAGS -j12
 ENV VERILATOR_THREADS 12
+ENV GDB_TARGET_FLAGS_EXTRA --without-python
+#--with-python=python3
 
 WORKDIR /chipyard
 

@@ -4,7 +4,7 @@
 	shallow = true
 [submodule "testchipip"]
 	path = generators/testchipip
-	url = https://github.com/irichter/testchipip.git
+	url = https://github.com/irichter/ucb-bar_testchipip.git
 	shallow = true
 [submodule "barstools"]
 	path = tools/barstools
@@ -36,8 +36,9 @@
 	shallow = true
 [submodule "generators/block-inclusivecache-sifive"]
 	path = generators/sifive-cache
-	url = https://github.com/sifive/block-inclusivecache-sifive.git
+	url = https://github.com/irichter/block-inclusivecache-sifive.git
 	shallow = true
+	branch = Configurable-writeBytes
 [submodule "toolchains/riscv-tools/riscv-gnu-toolchain"]
 	path = toolchains/riscv-tools/riscv-gnu-toolchain
 	url = https://github.com/riscv/riscv-gnu-toolchain.git
@@ -160,8 +161,9 @@
 	shallow = true
 [submodule "fpga/fpga-shells"]
 	path = fpga/fpga-shells
-	url = https://github.com/sifive/fpga-shells.git
+	url = https://github.com/irichter/fpga-shells.git
 	shallow = true
+	branch = irichter
 [submodule "tools/api-config-chipsalliance"]
 	path = tools/api-config-chipsalliance
 	url = https://github.com/chipsalliance/api-config-chipsalliance.git
@@ -187,3 +189,7 @@
 [submodule "fpga/digilent-boards"]
 	path = fpga/digilent-boards
 	url = https://github.com/Digilent/vivado-boards.git
+	branch = Microblaze-MIG
+[submodule "arty-serial-bootloader"]
+	path = arty-serial-bootloader
+	url = git@github.com:irichter/arty-serial-bootloader.git

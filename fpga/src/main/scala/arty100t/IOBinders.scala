@@ -13,6 +13,7 @@ import sifive.blocks.devices.spi.{HasPeripherySPI, HasPeripherySPIModuleImp, MMC
 
 import chipyard.{CanHaveMasterTLMemPort}
 import chipyard.iobinders.{OverrideIOBinder, OverrideLazyIOBinder}
+import sifive.blocks.devices.spi.HasPeripherySPIFlashModuleImp
 
 class WithUARTIOPassthrough extends OverrideIOBinder({
   (system: HasPeripheryUARTModuleImp) => {
@@ -40,6 +41,16 @@ class WithSPIIOPassthrough  extends OverrideLazyIOBinder({
         (io_spi_pins_temp, Nil)
       } }
     }
+  }
+})
+
+class WithSPIFlashIOPassthrough  extends OverrideIOBinder({
+  (system: HasPeripherySPIFlashModuleImp) => {
+    val io_spiflash_pins_temp = system.qspi.zipWithIndex.map { case (dio, i) => IO(dio.cloneType).suggestName(s"qspi_$i") }
+    (io_spiflash_pins_temp zip system.qspi).map { case (io, sysio) =>
+      io <> sysio
+    }
+    (io_spiflash_pins_temp, Nil)
   }
 })
 

@@ -58,8 +58,21 @@ class Arty100TFPGATestHarness(override implicit val p: Parameters) extends Arty1
 
   /*** SPI ***/
 
-  val io_spi_bb = BundleBridgeSource(() => (new SPIPortIO(dp(PeripherySPIKey).head)))
-  dp(SPIOverlayKey).head.place(SPIDesignInput(dp(PeripherySPIKey).head, io_spi_bb))
+  def hasPeripherySPIKey = dp(PeripherySPIKey).length > 0
+  val io_spi_bb = BundleBridgeSource(() => (new SPIPortIO(if (hasPeripherySPIKey) dp(PeripherySPIKey).head else SPIParams(rAddress = 0))))
+  if (hasPeripherySPIKey) {
+    dp(SPIOverlayKey).head.place(SPIDesignInput(dp(PeripherySPIKey).head, io_spi_bb))
+  }
+
+  def hasPeripherySPIFlashKey = dp(PeripherySPIFlashKey).length > 0
+  val io_spiflash_bb = BundleBridgeSource(() => (new SPIPortIO(if (hasPeripherySPIFlashKey) dp(PeripherySPIFlashKey).head else SPIParams(rAddress = 0))))
+  if (hasPeripherySPIFlashKey) {
+    dp(SPIFlashOverlayKey).head.place(SPIFlashDesignInput(io_spiflash_bb))
+  }
+
+  // val io_led = dp(LEDOverlayKey).head.place(LEDDesignInput()).overlayOutput.led
+
+  val debug_jtag = dp(JTAGDebugOverlayKey).head.place(JTAGDebugDesignInput()).overlayOutput.jtag
 
   /*** DDR ***/
 
@@ -93,7 +106,7 @@ class Arty100TFPGATestHarnessImp(_outer: Arty100TFPGATestHarness) extends LazyRa
   val powerOnReset: Bool = PowerOnResetFPGAOnly(sysclk)
   _outer.sdc.addAsyncPath(Seq(powerOnReset))
 
-  _outer.pllReset := (!resetIBUF.io.O) || powerOnReset
+  _outer.pllReset := (!(resetIBUF.io.O&& _outer.debug_jtag.srst_n)) || powerOnReset
 
   // reset setup
   val hReset = Wire(Reset())
@@ -102,7 +115,7 @@ class Arty100TFPGATestHarnessImp(_outer: Arty100TFPGATestHarness) extends LazyRa
   val buildtopClock = _outer.dutClock.in.head._1.clock
   val buildtopReset = WireInit(hReset)
   val dutReset = hReset.asAsyncReset
-  val success = IO(Output(Bool()))
+  val success = Wire(Bool()) //IO(Output(Bool()))
 
   // This will be overridden by the WithFPGASimSerial harness binder to set
   // success to the output of the sim serial module.

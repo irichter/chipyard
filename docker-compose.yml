@@ -13,6 +13,7 @@ services:
     volumes:
       - .:/chipyard
       - ./docker-homedir:/home/docker
+      - /tools/Xilinx:/tools/Xilinx
     tmpfs:
       - /tmp
       - /run

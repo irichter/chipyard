@@ -3,5 +3,5 @@ __DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]:-${(%):-%x}}")")"
 
 export HOST=$(hostname)
 
-cd "$__DIR" && docker-compose exec chipyard /bin/bash
+cd "$__DIR" && docker compose exec chipyard /bin/bash
 
